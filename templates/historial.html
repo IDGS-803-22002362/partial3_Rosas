@@ -1,0 +1,97 @@
+{% extends "layout.html" %}
+{% block container %}
+<div class="container mx-auto p-6">
+
+  <div class="container mx-auto p-6">
+    <div class="flex justify-end">
+      <h1 class="text-2xl font-bold text-gray-700 m-4">
+        Historial
+      </h1>
+    </div>
+  <hr class="mb-4" />
+
+  <!-- Form para filtrar por día o mes -->
+  <form method="POST" action="{{ url_for('historial') }}" class="space-y-4 bg-white p-4 rounded shadow">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="flex items-center mb-2">
+      <input
+        type="radio"
+        id="opcion_dia"
+        name="filtro_fecha"
+        value="dia"
+        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+        checked
+      />
+      <label for="opcion_dia" class="ml-2 text-sm font-medium text-gray-700">
+        Día
+      </label>
+    </div>
+    <div class="flex items-center mb-2">
+      <input
+        type="radio"
+        id="opcion_mes"
+        name="filtro_fecha"
+        value="mes"
+        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+      />
+      <label for="opcion_mes" class="ml-2 text-sm font-medium text-gray-700">
+        Mes
+      </label>
+    </div>
+
+    <div>
+      <label for="fecha" class="block mb-1 font-semibold">Fecha</label>
+      <input
+        type="date"
+        id="fecha"
+        name="fecha"
+        class="border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-64"
+        required
+      />
+    </div>
+
+    <button
+      type="submit"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-4 py-2 rounded-md shadow"
+    >
+      Buscar
+    </button>
+  </form>
+
+  <!-- Resultados de la búsqueda -->
+  {% if pedidos %}
+  <div class="mt-6 bg-white rounded-md shadow p-4">
+    <h2 class="text-lg font-semibold text-gray-700 mb-4">Resultados</h2>
+    <table class="w-full table-auto text-left">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="py-2 px-4">Cliente</th>
+          <th class="py-2 px-4">Fecha</th>
+          <th class="py-2 px-4">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for pedido in pedidos %}
+        <tr class="border-b">
+          <td class="py-2 px-4">{{ pedido.nombre }}</td>
+          <td class="py-2 px-4">
+            {% if pedido.fecha_pedido %}
+              {{ pedido.fecha_pedido.strftime("%Y-%m-%d %H:%M:%S") }}
+            {% endif %}
+          </td>
+          <td class="py-2 px-4">$ {{ pedido.total }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="mt-4 font-semibold">
+      Total de ventas: $ {{ total_ventas }}
+    </div>
+  </div>
+  {% else %}
+  <p class="mt-4 text-gray-500">No hay registros para la fecha seleccionada.</p>
+  {% endif %}
+</div>
+{% endblock %}
